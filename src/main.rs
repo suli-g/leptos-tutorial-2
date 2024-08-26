@@ -9,7 +9,7 @@ fn I32List(
         <ul>
             {items.into_iter().map(|n| view! {
                 <li>{n}</li>
-            }).collect::<Vec<_>>()}
+            }).collect_view()}
         </ul>
     }
 }
