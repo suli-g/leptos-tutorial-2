@@ -4,7 +4,7 @@ use leptos::*;
 #[derive(Debug, Clone)]
 struct DatabaseEntry {
     key: String,
-    value: i32,
+    value: RwSignal<i32>,  // Make the value reactive.
 }
 
 
@@ -30,9 +30,10 @@ fn I32List(
 fn App() -> impl IntoView {
     // Create some dummy database entries:
     let (data, set_data) = create_signal(vec![
-        DatabaseEntry { key: "key1".to_string(), value: 1 },
-        DatabaseEntry { key: "key2".to_string(), value: 2 },
-        DatabaseEntry { key: "key3".to_string(), value: 3 },
+        // Store each value as a reactive signal:
+        DatabaseEntry { key: "key1".to_string(), value: create_rw_signal(1) },
+        DatabaseEntry { key: "key2".to_string(), value: create_rw_signal(2) },
+        DatabaseEntry { key: "key3".to_string(), value: create_rw_signal(3) },
     ]);
     // A simple vector of i32 items:
     let items = vec![0, 1, 2];
@@ -42,9 +43,9 @@ fn App() -> impl IntoView {
         <I32List items={items} />
 
         <button on:click=move |_| {
-            set_data.update(|data| {
+            data.with(|data| {  // Use 'data.with' instead of set_data
                 for row in data {
-                    row.value *= 2;
+                    row.value.update(|value| *value *= 2); // Update the value as a signal.
                 }
             });
             logging::log!("{:?}", data.get());
@@ -57,7 +58,7 @@ fn App() -> impl IntoView {
             let:child
             // Alternative to: children=|child| view! { <p>{child.value}</p> }
         >
-            <p>{child.value}</p>
+            <p>{move || child.value}</p>
         </For>
     }
 }
