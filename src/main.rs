@@ -1,7 +1,8 @@
 use leptos::*;
 
+/// Renders an unordered list of i32 items.
 #[component]
-fn ItemList(
+fn I32List(
     items: Vec<i32>,
 ) -> impl IntoView {
     view! {
@@ -13,13 +14,13 @@ fn ItemList(
     }
 }
 
-
+/// Renders the main application.
 #[component]
 fn App() -> impl IntoView {
     let items = vec![0, 1, 2];
     view! {
         <p>{items.clone()}</p>
-        <ItemList items={items} />
+        <I32List items={items} />
     }
 }
 
