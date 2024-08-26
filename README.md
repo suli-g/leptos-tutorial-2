@@ -9,7 +9,7 @@ To get started, follow these steps:
 1. [Install Rust](^1)
     > This should enable the `cargo` command, as well as some other things which will be needed for this project.
 
-2. Install Trunk using `cargo` (enabled by [installing rust]()):
+2. Install Trunk using `cargo` (enabled by [installing rust](^1)):
 
     ```shell
     cargo install trunk
