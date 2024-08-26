@@ -18,8 +18,8 @@ To get started, follow these steps:
 3. Clone this Repo:
 
     ```shell
-    git clone suli-g/leptos-tutorial
-    cd leptos-tutorial
+    git clone suli-g/leptos-tutorial-2
+    cd leptos-tutorial-2
     ```
 
 4. Install the dependencies:
