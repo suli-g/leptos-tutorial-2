@@ -4,15 +4,12 @@ use leptos::*;
 #[derive(Debug, Clone)]
 struct DatabaseEntry {
     key: String,
-    value: RwSignal<i32>,  // Make the value reactive.
+    value: i32,
 }
-
 
 /// Renders an unordered list of i32 items.
 #[component]
-fn I32List(
-    items: Vec<i32>,
-) -> impl IntoView {
+fn I32List(items: Vec<i32>) -> impl IntoView {
     let counters = (0..items.len()).map(|idx| create_signal(idx));
     view! {
         <ul>
@@ -30,37 +27,49 @@ fn I32List(
 fn App() -> impl IntoView {
     // Create some dummy database entries:
     let (data, set_data) = create_signal(vec![
-        // Store each value as a reactive signal:
-        DatabaseEntry { key: "key1".to_string(), value: create_rw_signal(1) },
-        DatabaseEntry { key: "key2".to_string(), value: create_rw_signal(2) },
-        DatabaseEntry { key: "key3".to_string(), value: create_rw_signal(3) },
+        DatabaseEntry {
+            key: "key1".to_string(),
+            value: 1,
+        },
+        DatabaseEntry {
+            key: "key2".to_string(),
+            value: 2,
+        },
+        DatabaseEntry {
+            key: "key3".to_string(),
+            value: 3,
+        },
     ]);
     // A simple vector of i32 items:
     let items = vec![0, 1, 2];
 
     view! {
-        <p>{items.clone()}</p>
-        <I32List items={items} />
+            <p>{items.clone()}</p>
+            <I32List items={items} />
 
-        <button on:click=move |_| {
-            data.with(|data| {  // Use 'data.with' instead of set_data
-                for row in data {
-                    row.value.update(|value| *value *= 2); // Update the value as a signal.
+            <button on:click=move |_| {
+                set_data.update(|data| {
+                    for row in data {
+                        row.value *= 2;
+                    }
+                });
+                logging::log!("{:?}", data.get());
+            }>
+                "Update data"
+            </button>
+            <For
+                each=move || data().into_iter().enumerate()
+                key=|(_, state)| state.key.clone()
+                children=move |(index, _)| {
+                    let value = create_memo(move |_| {
+                        data.with(|data| data.get(index).map(|d| d.value).unwrap_or(0))
+                    });
+                    view! {
+                        <p>{value}</p>
+                    }
                 }
-            });
-            logging::log!("{:?}", data.get());
-        }>
-            "Update data"
-        </button>
-        <For
-            each=data
-            key=|state| state.key.clone()
-            let:child
-            // Alternative to: children=|child| view! { <p>{child.value}</p> }
-        >
-            <p>{move || child.value}</p>
-        </For>
-    }
+            />
+        }
 }
 
 fn main() {
